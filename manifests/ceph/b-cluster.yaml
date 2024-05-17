@@ -213,6 +213,9 @@ spec:
     # TODO: update this to match system
     # deviceFilter: nvme1n1
     devices:
+      - name: "nvme0n1"
+        config:
+          osdsPerDevice: "6"
       - name: "nvme1n1"
         config:
           osdsPerDevice: "6"

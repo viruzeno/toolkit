@@ -5,27 +5,20 @@ metadata:
   name: k0s
 spec:
   api:
-    address: 172.17.0.1
+    address: 192.168.1.20
     k0sApiPort: 9443
     port: 6443
     sans:
-    - 172.17.0.1
     - 192.168.1.20
-    - fe80::42:f9ff:fee1:23d7
-    - fe80::7c99:aaff:fe85:8c0e
-    - fe80::8c83:1bff:fe56:5dcc
   controllerManager: {}
   extensions:
     helm:
+      charts: null
       concurrencyLevel: 5
-      repositories:
-      charts:
+      repositories: null
     storage:
       create_default_storage_class: false
       type: external_storage
-  # NOTE: ON PRODUCTION THIS WILL BE ENABLED, SO THAT THE LOCAL IMAGES WILL BE USED
-  # images:
-  #   default_pull_policy: Never
   installConfig:
     users:
       etcdUser: etcd
@@ -72,7 +65,7 @@ spec:
   storage:
     etcd:
       externalCluster: null
-      peerAddress: 172.17.0.1
+      peerAddress: 192.168.1.20
     type: etcd
   telemetry:
     enabled: false

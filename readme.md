@@ -4,7 +4,8 @@
 
 ```bash
 # Install K0s
-sudo ./install-k0s.sh
+sudo apt install curl
+sudo bash install-k0s.sh
 
 # Install Kubectl
 sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -45,6 +46,7 @@ sudo k0s kubectl get nodes
 ## Configure kubectl
 
 ```bash
+mkdir ~/.kube
 sudo cp /var/lib/k0s/pki/admin.conf ~/.kube/config
 sudo chown $USER:$USER ~/.kube/config
 ```
@@ -74,9 +76,36 @@ kubectl apply -f manifests/ceph/c-storageclass.yaml
 kubectl apply -f mongo-pvc.yaml
 ```
 
+### Fault find rook
+
+```bash
+kubectl create -f development/toolbox.yaml
+kubectl -n rook-ceph rollout status deploy/rook-ceph-tools
+kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- bash
+
+ceph status
+ceph osd status
+ceph df
+rados df
+
+kubectl -n rook-ceph delete deploy/rook-ceph-tools
+```
+
 ## Cleanup
 
 ```bash
 sudo k0s stop
 sudo k0s reset
+```
+
+## Load balancer Setup
+
+- https://docs.k0sproject.io/stable/examples/metallb-loadbalancer/
+- https://docs.k0sproject.io/stable/examples/nginx-ingress/#install-nginx-using-loadbalancer
+
+Metal LB is used to get IPs on a specific range
+Nginx is then used to link into interal services
+
+```bash
+curl -H 'Host: web.example.com' http://192.168.1.170
 ```

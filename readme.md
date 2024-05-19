@@ -64,11 +64,23 @@ kubectl get pods --all-namespaces
 kubectl get all --all-namespaces
 ```
 
+## Gitlab
+
+```bash
+kubectl -n gitlab-system apply -f gitlab.yaml
+```
+
+# Mark as default stoagre 
+```bash
+kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
 ## Deploy Rook
 
 https://docs.k0sproject.io/stable/examples/rook-ceph/#6-deploy-rook
 
 ```bash
+# https://github.com/rook/rook/tree/release-1.14/deploy/examples
 kubectl apply -f manifests/ceph/a-crds.yaml -f manifests/ceph/a-common.yaml -f manifests/ceph/a-operator.yaml
 kubectl apply -f manifests/ceph/b-cluster.yaml
 kubectl apply -f manifests/ceph/c-storageclass.yaml

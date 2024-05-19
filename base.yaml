@@ -18,7 +18,7 @@ spec:
       repositories: null
     storage:
       create_default_storage_class: false
-      type: external_storage
+      type: openebs_local_storage  # external_storage
   installConfig:
     users:
       etcdUser: etcd

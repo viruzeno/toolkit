@@ -9,7 +9,7 @@ spec:
       certmanager:
         install: false
       nginx-ingress:
-        enabled: false
+        enabled: true
       global:
         hosts:
           domain: gitlab.local

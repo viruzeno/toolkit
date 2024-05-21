@@ -1,0 +1,38 @@
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+  name: gitlab
+spec:
+  chart:
+    version: "7.11.2" # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator
+    values:
+      certmanager:
+        install: false
+      nginx-ingress:
+        enabled: false
+      global:
+        hosts:
+          domain: gitlab.local
+        ingress:
+          configureCertmanager: true
+      certmanager-issuer:
+        email: viruzeno@gmail.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-system-web
+  namespace: gitlab-system
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.171
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 22
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

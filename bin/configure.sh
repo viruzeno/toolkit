@@ -9,6 +9,7 @@ sudo cp -r manifests /var/lib/k0s
 # Enable Single node controller and worker
 sudo k0s install controller -c /etc/k0s/k0s.yaml --single
 sudo k0s start
+sleep 5
 
 sudo k0s status
 sudo k0s kubectl get nodes

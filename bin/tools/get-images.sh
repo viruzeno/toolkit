@@ -20,8 +20,12 @@ images+=("docker.io/library/httpd:2.4.53-alpine")
 images+=("docker.io/rook/ceph:v1.7.11")
 images+=("quay.io/ceph/ceph:v16.2.6")
 
-sudo ctr --namespace k8s.io --address /run/k0s/containerd.sock image pull ${images[*]}
-sudo ctr --namespace k8s.io --address /run/k0s/containerd.sock images export bundle_file ${images[*]}
+# sudo ctr --namespace k8s.io --address /run/k0s/containerd.sock image pull ${images[*]}
+# sudo ctr --namespace k8s.io --address /run/k0s/containerd.sock images export bundle_file ${images[*]}
+
+
+k0s airgap list-images | xargs -I{} docker pull {}
+docker image save $(k0s airgap list-images | xargs) -o bundle_file
 
 # sudo mkdir -p /var/lib/k0s/images
-# sudo cp bundle_file /var/lib/k0s/images/bundle_file
+# sudo mv bundle_file /var/lib/k0s/images/bundle_file

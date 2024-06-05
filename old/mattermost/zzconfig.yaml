@@ -1,0 +1,41 @@
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+# name: my-mattermost-license
+# type: Opaque
+# stringData:
+# license: <LICENSE_FILE_CONTENTS>
+---
+apiVersion: installation.mattermost.com/v1beta1
+kind: Mattermost
+metadata:
+  name: mattermost # Chose the desired installation name. Example = mm-example-full
+spec:
+  size: 100users # Adjust to your requirements. Example = 5000users
+ingress:
+  enabled: true
+  host: mattermost.local # Adjust to your domain. Example = example.mattermost-example.com
+annotations:
+  kubernetes.io/ingress.class: nginx
+  version: 9.3.0 # Select a recent supported version of Mattermost. Example = 9.3.0
+  # licenseSecret: "my-mattermost-license" # If you created a license secret in step 1, put the secret name here
+---
+apiVersion: v1
+data:
+  DB_CONNECTION_CHECK_URL: <DB_CONNECTION_CHECK_URL>
+  DB_CONNECTION_STRING: <DB_CONNECTION_STRING>
+  MM_SQLSETTINGS_DATASOURCEREPLICAS: <MM_SQLSETTINGS_DATASOURCEREPLICAS>
+kind: Secret
+metadata:
+  name: my-postgres-connection
+type: Opaque
+---
+apiVersion: v1
+data:
+  accesskey: QUNDRVNTX0tFWQo=
+  secretkey: U1VQRVJfU0VDUkVUX0tFWQo=
+  kind: Secret
+metadata:
+  name: my-s3-iam-access-key
+  type: Opaque

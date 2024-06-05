@@ -1,0 +1,40 @@
+version: '3.6'
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:17.0.0-ce.0
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.local.eno'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        # Add any other gitlab.rb configuration here, each on its own line
+        external_url 'http://gitlab.local.eno'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+    ports:
+      - '8081:80'
+      - '8443:443'
+      - '2222:22'
+    volumes:
+      - '/home/viruzeno/gitlab/config:/etc/gitlab'
+      - '/home/viruzeno/gitlab/logs:/var/log/gitlab'
+      - '/home/viruzeno/gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      - gitlab-network
+
+  gitlab-runner1:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    container_name: gitlab-runner1
+    hostname: gitlab-runner1
+    depends_on:
+      - gitlab
+    volumes:
+     - /home/viruzeno/gitlab/gitlab-runner1:/etc/gitlab-runner
+     - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+        - gitlab-network
+
+networks:
+  gitlab-network:
+    name: gitlab-network

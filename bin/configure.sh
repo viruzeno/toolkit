@@ -3,6 +3,7 @@
 sudo mkdir /etc/k0s
 # Config
 sudo cp base.yaml /etc/k0s/k0s.yaml
+# sudo cp containerd.toml /etc/k0s/containerd.toml
 # manifests
 sudo mkdir -p /var/lib/k0s/manifests
 sudo cp -r manifests /var/lib/k0s

@@ -7,6 +7,14 @@ cd bin
 bash ./install.sh
 ```
 
+### Remove
+
+```bash
+/usr/local/bin/k3s-uninstall.sh
+rm -rf ~/.kube/
+sudo rm -rf /var/lib/rancher/
+```
+
 ## Install manifests
 
 ### Dashboard

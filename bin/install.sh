@@ -40,7 +40,7 @@ sudo chown ${USER}:${USER} /usr/local/bin/k3s
 # sudo mkdir -p /var/lib/rancher/k3s/server/manifests/
 # sudo touch /var/lib/rancher/k3s/server/manifests/traefik.yaml.skip
 # Compleyte install
-export INSTALL_K3S_EXEC="--disable=traefik --embedded-registry"  #--selinux"
+export INSTALL_K3S_EXEC="--disable=traefik --embedded-registry --selinux"
 export INSTALL_K3S_SKIP_DOWNLOAD=true
 bash ./outputs/install.sh
 

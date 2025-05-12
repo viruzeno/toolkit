@@ -10,14 +10,23 @@ bash ./install.sh
 ### Remove
 
 ```bash
-sudo /usr/bin/rke2-uninstall.sh
+/usr/local/bin/k3s-uninstall.sh
 rm -rf ~/.kube/
 sudo rm -rf /var/lib/rancher/
-sudo rm -rf /usr/local/bin/kubectlo
-sudo rm "/etc/yum.repos.d/rancher-rke2-*"
 ```
 
 
+
+## Install manifests
+
+### Dashboard
+
+```bash
+sudo cp -r manifests/dashboard/ /var/lib/rancher/k3s/server/manifests/dashboard/
+# Browse to https://<serverip>:30001/#/login
+## Generate Token
+kubectl -n kubernetes-dashboard create token admin-user
+```
 
 ## Deploy Deployments
 

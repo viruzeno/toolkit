@@ -38,6 +38,11 @@ curl -L "https://github.com/rancher/rke2/releases/download/v${RKE2_MAJOR}.${RKE2
 curl -L "https://github.com/rancher/rke2/releases/download/v${RKE2_MAJOR}.${RKE2_MINOR}.${RKE2_INCREMENT}%2Brke2r1/rke2-images-core.linux-amd64.tar.zst" -o outputs/rke2-images-core.linux-amd64.tar.zst
 curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o outputs/kubectl
 curl -L https://github.com/derailed/k9s/releases/download/v0.50.4/k9s_linux_amd64.rpm -o ./outputs/k9s_linux_amd64.rpm
+curl -L https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz -o outputs/helm.tgz
+tar xzf outputs/helm.tgz -C outputs/
+mv outputs/linux-amd64/helm outputs
+rm -rf outputs/linux-amd64
+rm -rf outputs/helm.tgz
 
 ## Download Images and TAR them up (should look into using zst for MUCH better compression)
 declare -A images
@@ -111,8 +116,8 @@ cni:
     - "canal"
 selinux: true
 enable-servicelb: true
-# profile:
-#     - "cis"
+profile:
+    - "cis"
 EOF
 sudo mv config.yaml /etc/rancher/rke2/
 
@@ -128,6 +133,12 @@ sudo rm /usr/local/bin/kubectl
 sudo cp outputs/kubectl /usr/local/bin/kubectl
 sudo chmod 750 /usr/local/bin/kubectl
 sudo chown ${USER}:${USER} /usr/local/bin/kubectl
+
+# Helm
+sudo rm /usr/local/bin/helm
+sudo cp outputs/helm /usr/local/bin/helm
+sudo chmod 750 /usr/local/bin/helm
+sudo chown ${USER}:${USER} /usr/local/bin/helm
 
 # Bash Profile (needs reboot to apply)
 export KUBECONFIG=${HOME}/.kube/config

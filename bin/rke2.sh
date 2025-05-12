@@ -46,6 +46,8 @@ rm -rf outputs/helm.tgz
 
 ## Download Images and TAR them up
 declare -A images
+images["nginx"]="docker.io/nginx:1.28.0-alpine-perl"
+images["nginx-unprivileged"]="docker.io/nginxinc/nginx-unprivileged:alpine3.21-perl"
 images["rancher-demo"]="docker.io/bashofmann/rancher-demo:1.0.0"
 images["busybox"]="docker.io/busybox:stable-glibc"
 images["nginx-controller"]="registry.k8s.io/ingress-nginx/controller:v1.12.2"

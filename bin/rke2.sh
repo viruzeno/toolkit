@@ -29,7 +29,7 @@ EOF
 sudo mv latest.repo /etc/yum.repos.d/rancher-rke2-${RKE2_MAJOR}-${RKE2_MINOR}-latest.repo
 
 # Podman is only used on Developer machine for pulling images (may be useful as it's compatable with the RKE2 runtime)
-sudo yum install -y podman
+sudo yum install -y podman zstd
 # Install from RKE2
 sudo yum install -y curl wireguard-tools container-selinux iptables libnetfilter_conntrack libnfnetlink libnftnl policycoreutils-python-utils rke2-common rke2-server rke2-selinux
 
@@ -44,7 +44,7 @@ mv outputs/linux-amd64/helm outputs
 rm -rf outputs/linux-amd64
 rm -rf outputs/helm.tgz
 
-## Download Images and TAR them up (should look into using zst for MUCH better compression)
+## Download Images and TAR them up
 declare -A images
 images["rancher-demo"]="docker.io/bashofmann/rancher-demo:1.0.0"
 images["busybox"]="docker.io/busybox:stable-glibc"
@@ -58,6 +58,8 @@ images["dashboard"]="docker.io/kubernetesui/dashboard:v2.7.0"
 for image in ${!images[@]}; do 
     podman pull ${images[$image]}
     podman save ${images[$image]} -o ./outputs/${image}.tar
+    zstd -c -T0 --ultra -20 ./outputs/${image}.tar -o ./outputs/${image}.tar.zst
+    rm ./outputs/${image}.tar
 done
 
 # NOTE: The following is the setup, and is fully offline.
@@ -80,7 +82,7 @@ sudo mkdir -p /var/lib/rancher/rke2/agent/images/
 sudo cp outputs/rke2-images-canal.linux-amd64.tar.zst /var/lib/rancher/rke2/agent/images/rke2-images-canal.linux-amd64.tar.zst
 sudo cp outputs/rke2-images-core.linux-amd64.tar.zst /var/lib/rancher/rke2/agent/images/rke2-images-core.linux-amd64.tar.zst
 # Load other container images into internal registry # NOTE: must use 'imagePullPolicy: IfNotPresent'
-for image in ${!images[@]}; do sudo cp outputs/${image}.tar /var/lib/rancher/rke2/agent/images/${image}.tar; done
+for image in ${!images[@]}; do sudo cp outputs/${image}.tar.zst /var/lib/rancher/rke2/agent/images/${image}.tar.zst; done
 
 # Hardening for CIS mode
 sudo cp -f /usr/share/rke2/rke2-cis-sysctl.conf /etc/sysctl.d/60-rke2-cis.conf

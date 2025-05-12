@@ -13,7 +13,16 @@ bash ./install.sh
 /usr/local/bin/k3s-uninstall.sh
 rm -rf ~/.kube/
 sudo rm -rf /var/lib/rancher/
+
+# ---
+sudo /usr/bin/rke2-uninstall.sh
+rm -rf ~/.kube/
+sudo rm -rf /var/lib/rancher/
+sudo rm -rf /usr/local/bin/kubectlo
+sudo rm "/etc/yum.repos.d/rancher-rke2-*"
 ```
+
+
 
 ## Install manifests
 
@@ -50,4 +59,11 @@ kubectl delete namespace ${NAMESPACE}
 kubectl get namespace "${NAMESPACE}" -o json \
   | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
   | kubectl replace --raw /api/v1/namespaces/${NAMESPACE}/finalize -f -
+```
+
+
+# if kubectl is not working
+
+```bash
+/var/lib/rancher/rke2/bin/crictl --runtime-endpoint unix:///run/k3s/containerd/containerd.sock ps
 ```

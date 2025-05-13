@@ -1,0 +1,24 @@
+---
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+  name: gitlab
+spec:
+  chart:
+    version: "8.11.2" # https://gitlab.com/gitlab-org/cloud-native/gitlab-operator/-/blob/1.12.2/CHART_VERSIONS
+    values:
+      certmanager:
+        install: false
+      nginx-ingress:
+        enabled: false
+      global:
+        hosts:
+          domain: server.local     # Ingress will be gitlab.<domain>
+        ingress:
+          configureCertmanager: true
+      certmanager-issuer:
+        email: viruzeno@server.local
+
+
+
+

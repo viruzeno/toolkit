@@ -117,11 +117,17 @@ cluster-domain:
   - "server.local"
 write-kubeconfig-mode: "0640"
 cni: 
-    - "canal"
+  - "canal"
 selinux: true
 enable-servicelb: true
-profile:
-    - "cis"
+#profile:
+#    - "cis"
+kubelet-arg:
+  - "--cpu-manager-policy=static"
+  - "--cpu-manager-policy-options=full-pcpus-only=true"
+  - "--cpu-manager-reconcile-period=0s"
+  - "--kube-reserved=cpu=1"
+  - "--system-reserved=cpu=1"
 EOF
 sudo mv config.yaml /etc/rancher/rke2/
 

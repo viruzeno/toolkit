@@ -51,3 +51,8 @@ kubectl get namespace "${NAMESPACE}" -o json \
 ```bash
 /var/lib/rancher/rke2/bin/crictl --runtime-endpoint unix:///run/k3s/containerd/containerd.sock ps
 ```
+
+# Get all images from a namespace
+```bash 
+kubectl --namespace gitlab-system describe pods | grep 'Image:' | awk '{print $2}' | sort | uniq
+```

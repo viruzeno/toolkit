@@ -228,4 +228,32 @@ rm ingress.conf
 kubectl apply -f outputs/local-path-storage.yaml
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 sudo mkdir /opt/local-path-provisioner
-sudo chcon -R -t svirt_sandbox_file_t -l s0 /opt/local-path-provisioner
+
+# Selinux Policy for Local Storage
+cat << EOF > localpathpolicy.te
+module localpathpolicy 1.0;
+
+require {
+    type usr_t;
+    type init_t;
+    type container_t;
+    type container_var_lib_t;
+    class dir { search write add_name create remove_name rmdir setattr getattr };
+    class file { create open write append read unlink setattr getattr };
+}
+
+#============= container_t ==============
+allow container_t container_var_lib_t:file { create open write append read setattr getattr unlink };
+allow container_t container_var_lib_t:dir { add_name create remove_name rmdir setattr write search };
+allow container_t init_t:dir search;
+allow container_t usr_t:dir { add_name create remove_name rmdir setattr getattr write };
+allow container_t usr_t:file { create unlink write setattr getattr };
+allow container_t init_t:file { read open };
+EOF
+
+checkmodule -M -m -o localpathpolicy.mod localpathpolicy.te
+semodule_package -o localpathpolicy.pp -m localpathpolicy.mod
+sudo semodule -i localpathpolicy.pp
+sudo semanage fcontext -a -t container_file_t "/opt/local-path-provisioner(/.*)?"
+sudo restorecon -R -v /opt/local-path-provisioner
+rm localpathpolicy.*

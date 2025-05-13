@@ -30,6 +30,11 @@ sudo mv latest.repo /etc/yum.repos.d/rancher-rke2-${RKE2_MAJOR}-${RKE2_MINOR}-la
 
 # Podman is only used on Developer machine for pulling images (may be useful as it's compatable with the RKE2 runtime)
 sudo yum install -y podman zstd
+
+# Nice to have devel stuff
+sudo yum install -y oracle-epel-release-el9.x86_64
+sudo yum install htop btop ranger ncdu
+
 # Install from RKE2
 sudo yum install -y curl wireguard-tools container-selinux iptables libnetfilter_conntrack libnfnetlink libnftnl policycoreutils-python-utils rke2-common rke2-server rke2-selinux
 
@@ -43,15 +48,27 @@ tar xzf outputs/helm.tgz -C outputs/
 mv outputs/linux-amd64/helm outputs
 rm -rf outputs/linux-amd64
 rm -rf outputs/helm.tgz
+curl -L "https://raw.githubusercontent.com/rancher/local-path-provisioner/refs/heads/master/deploy/local-path-storage.yaml" -o outputs/local-path-storage.yaml
 
 ## Download Images and TAR them up
 declare -A images
+# Splunk
+images["splunk-operator"]="docker.io/splunk/splunk-operator:2.8.0"
+images["kube-rbac-proxy"]="gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1"
+images["splunk"]="docker.io/splunk/splunk:9.4"
+images["splunk-universalforwarder"]="docker.io/splunk/universalforwarder:9.4"
+# GitLab
+images["gitlab-operator"]="registry.gitlab.com/gitlab-org/cloud-native/gitlab-operator:1.12.2"
+# Utility
 images["nginx"]="docker.io/nginx:1.28.0-alpine-perl"
 images["nginx-unprivileged"]="docker.io/nginxinc/nginx-unprivileged:alpine3.21-perl"
-images["rancher-demo"]="docker.io/bashofmann/rancher-demo:1.0.0"
+# Storage Class
+images["local-path-provisioner"]="rancher/local-path-provisioner:v0.0.31"
 images["busybox"]="docker.io/busybox:stable-glibc"
-images["nginx-controller"]="registry.k8s.io/ingress-nginx/controller:v1.12.2"
-images["kube-webhook-certgen"]="registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.5.3"
+# Test
+images["rancher-demo"]="docker.io/bashofmann/rancher-demo:1.0.0"
+# images["nginx-controller"]="registry.k8s.io/ingress-nginx/controller:v1.12.2"
+# images["kube-webhook-certgen"]="registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.5.3"
 images["nginx-test"]="docker.io/httpd:2.4.53-alpine"
 images["dashboard-metrics"]="docker.io/kubernetesui/metrics-scraper:v1.0.8"
 images["dashboard"]="docker.io/kubernetesui/dashboard:v2.7.0"
@@ -182,3 +199,9 @@ spec:
 EOF
 kubectl apply -f ingress.conf
 rm ingress.conf
+
+# Storage Class for Local Storage
+kubectl apply -f outputs/local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+sudo mkdir /opt/local-path-provisioner
+sudo chcon -R -t svirt_sandbox_file_t -l s0 /opt/local-path-provisioner

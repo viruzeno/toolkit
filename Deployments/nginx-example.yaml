@@ -3,12 +3,25 @@ kind: Namespace
 metadata:
   name: web
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-path-rwx-example
+  namespace: web
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: rook-ceph-block
+  # volumeMode: Filesystem
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-server
   namespace: web
-
 spec:
   replicas: 2
   selector:
@@ -24,6 +37,10 @@ spec:
         runAsUser: 101
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+      - name: volv
+        persistentVolumeClaim:
+          claimName: local-path-rwx-example
       containers:
       - name: httpd
         image: docker.io/nginxinc/nginx-unprivileged:alpine3.21-perl
@@ -37,9 +54,15 @@ spec:
         securityContext:
           privileged: false
           allowPrivilegeEscalation: false
+          seLinuxOptions:
+            level: s0:c100,c102
+            # type: container_file_t
           capabilities:
             drop:
               - ALL
+        volumeMounts:
+        - name: volv
+          mountPath: /data
 ---
 apiVersion: v1
 kind: Service

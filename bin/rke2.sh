@@ -228,6 +228,7 @@ rm ingress.conf
 kubectl apply -f outputs/local-path-storage.yaml
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 sudo mkdir /opt/local-path-provisioner
+sudo chcon -R -t svirt_sandbox_file_t -l s0 /opt/local-path-provisioner
 
 # Selinux Policy for Local Storage
 cat << EOF > localpathpolicy.te

@@ -3,20 +3,20 @@
 apiVersion: enterprise.splunk.com/v4
 kind: ClusterManager
 metadata:
-  name: cm
+  name: rke
   namespace: splunk-operator
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
   monitoringConsoleRef:
-    name: monitor
+    name: rke
   # licenseManagerRef:
-  #   name: license
+  #   name: rke
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: MonitoringConsole
 metadata:
-  name: monitor
+  name: rke
   namespace: splunk-operator
   finalizers:
   - enterprise.splunk.com/delete-pvc
@@ -24,14 +24,14 @@ metadata:
 apiVersion: enterprise.splunk.com/v4
 kind: IndexerCluster
 metadata:
-  name: example
+  name: rke
   namespace: splunk-operator
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
   spec:
   clusterManagerRef:
-    name: cm
+    name: rke
   replicas: 2
   monitoringConsoleRef:
     name: monitor
@@ -39,20 +39,20 @@ spec:
 apiVersion: enterprise.splunk.com/v4
 kind: Standalone
 metadata:
-  name: search
+  name: rke
   namespace: splunk-operator
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
   clusterManagerRef:
-    name: cm
+    name: rke
   monitoringConsoleRef:
-    name: monitor
+    name: rke
 # ---
 # apiVersion: enterprise.splunk.com/v4
 # kind: LicenseManager
 # metadata:
-#   name: license
+#   name: rke
 #   namespace: splunk-operator
 #   finalizers:
 #   - enterprise.splunk.com/delete-pvc

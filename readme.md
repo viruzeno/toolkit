@@ -37,7 +37,7 @@ kubectl get all --all-namespaces
 ### Force delete namespace that is stuck in terminating 
 
 ```bash
-NAMESPACE="test"
+NAMESPACE="rook-ceph"
 kubectl delete namespace ${NAMESPACE}
 
 kubectl get namespace "${NAMESPACE}" -o json \

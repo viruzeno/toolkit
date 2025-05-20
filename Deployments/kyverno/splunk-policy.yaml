@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-security-context-to-pods
+spec:
+  rules:
+    - name: add-pod-security-context
+      match:
+        resources:
+          kinds:
+            - Pod
+          namespaces:
+            - splunk-operator
+      mutate:
+        patchStrategicMerge:
+          spec:
+            securityContext:
+              seLinuxOptions:
+                level: "s0:c104,c106"

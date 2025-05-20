@@ -8,10 +8,23 @@ metadata:
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
+  imagePullPolicy: IfNotPresent
+  etcVolumeStorageConfig:
+    storageCapacity: 15Gi
+  varVolumeStorageConfig:
+    storageCapacity: 25Gi
+  resources:
+    requests:
+      memory: "8Gi"
+      cpu: "6"
+    limits:
+      memory: "8Gi"
+      cpu: "6" 
   monitoringConsoleRef:
     name: rke
   # licenseManagerRef:
   #   name: rke
+  # fsGroupChangePolicy: "OnRootMismatch"
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: MonitoringConsole
@@ -20,6 +33,23 @@ metadata:
   namespace: splunk-operator
   finalizers:
   - enterprise.splunk.com/delete-pvc
+spec:
+  imagePullPolicy: IfNotPresent
+  etcVolumeStorageConfig:
+    storageCapacity: 15Gi
+  varVolumeStorageConfig:
+    storageCapacity: 25Gi
+  resources:
+    requests:
+      memory: "8Gi"
+      cpu: "6"
+    limits:
+      memory: "8Gi"
+      cpu: "6" 
+  # pod:
+  #   securityContext:
+  #     seLinuxOptions:
+  #       level: "s0:c123,c456"
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: IndexerCluster
@@ -29,12 +59,27 @@ metadata:
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
-  spec:
+  imagePullPolicy: IfNotPresent
+  etcVolumeStorageConfig:
+    storageCapacity: 15Gi
+  varVolumeStorageConfig:
+    storageCapacity: 25Gi
+  resources:
+    requests:
+      memory: "8Gi"
+      cpu: "6"
+    limits:
+      memory: "8Gi"
+      cpu: "6" 
   clusterManagerRef:
     name: rke
   replicas: 2
   monitoringConsoleRef:
     name: monitor
+  # pod:
+  #   securityContext:
+  #     seLinuxOptions:
+  #       level: "s0:c123,c456"
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: Standalone
@@ -44,10 +89,26 @@ metadata:
   finalizers:
   - enterprise.splunk.com/delete-pvc
 spec:
+  imagePullPolicy: IfNotPresent
+  etcVolumeStorageConfig:
+    storageCapacity: 15Gi
+  varVolumeStorageConfig:
+    storageCapacity: 25Gi
+  resources:
+    requests:
+      memory: "8Gi"
+      cpu: "6"
+    limits:
+      memory: "8Gi"
+      cpu: "6" 
   clusterManagerRef:
     name: rke
   monitoringConsoleRef:
     name: rke
+  # pod:
+  #   securityContext:
+  #     seLinuxOptions:
+  #       level: "s0:c123,c456"
 # ---
 # apiVersion: enterprise.splunk.com/v4
 # kind: LicenseManager

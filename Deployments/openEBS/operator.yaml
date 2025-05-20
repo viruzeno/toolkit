@@ -1,5 +1,4 @@
 # https://openebs.github.io/charts/openebs-operator.yaml
-# Modified as per https://openebs.io/blog/configuring-openebs-to-run-with-security-enhanced-linux
 
 # This manifest deploys the OpenEBS control plane components, 
 # with associated CRs & RBAC rules
@@ -35,7 +34,7 @@ metadata:
 ---
 # Define Role that allows operations on K8s pods/deployments
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: openebs-maya-operator
 rules:
@@ -43,8 +42,17 @@ rules:
   resources: ["nodes", "nodes/proxy"]
   verbs: ["*"]
 - apiGroups: ["*"]
-  resources: ["namespaces", "services", "pods", "deployments", "events", "endpoints", "configmaps", "jobs"]
+  resources: ["namespaces", "services", "pods", "pods/exec", "deployments", "deployments/finalizers", "replicationcontrollers", "replicasets", "events", "endpoints", "configmaps", "secrets", "jobs", "cronjobs"]
   verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["statefulsets", "daemonsets"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["list", "watch"]
+- apiGroups: ["*"]
+  resources: ["ingresses", "horizontalpodautoscalers", "verticalpodautoscalers", "certificatesigningrequests"]
+  verbs: ["list", "watch"]
 - apiGroups: ["*"]
   resources: ["storageclasses", "persistentvolumeclaims", "persistentvolumes"]
   verbs: ["*"]
@@ -53,26 +61,27 @@ rules:
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 - apiGroups: ["apiextensions.k8s.io"]
   resources: ["customresourcedefinitions"]
-  verbs: [ "get", "list", "create", "update", "delete"]
-- apiGroups: ["*"]
-  resources: [ "disks"]
+  verbs: [ "get", "list", "create", "update", "delete", "patch"]
+- apiGroups: ["openebs.io"]
+  resources: [ "*"]
   verbs: ["*" ]
-- apiGroups: ["*"]
-  resources: [ "storagepoolclaims", "storagepools"]
+- apiGroups: ["cstor.openebs.io"]
+  resources: [ "*"]
   verbs: ["*" ]
-- apiGroups: ["*"]
-  resources: [ "castemplates", "runtasks"]
-  verbs: ["*" ]
-- apiGroups: ["*"]
-  resources: [ "cstorpools", "cstorvolumereplicas", "cstorvolumes"]
-  verbs: ["*" ]
-- apiGroups: ['extensions']
-  resources: ['podsecuritypolicies']
-  verbs:     ['use']
-  resourceNames:
-  - openebs-privileged
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
+  verbs: ["get", "create", "list", "delete", "update", "patch"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
+- apiGroups: ["*"]
+  resources: ["poddisruptionbudgets"]
+  verbs: ["get", "list", "create", "delete", "watch"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "create", "update"]
 ---
 # Bind the Service Account with the Role Privileges.
 # TODO: Check if default account also needs to be there

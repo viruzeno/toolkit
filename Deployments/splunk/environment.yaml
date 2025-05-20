@@ -1,4 +1,6 @@
 # https://splunk.github.io/splunk-operator/Examples.html
+# https://splunk.github.io/splunk-operator/CustomResources.html
+# https://github.com/splunk/splunk-ansible/blob/develop/docs/advanced/default.yml.spec.md
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: ClusterManager
@@ -15,16 +17,15 @@ spec:
     storageCapacity: 25Gi
   resources:
     requests:
-      memory: "8Gi"
-      cpu: "6"
+      memory: "4Gi"
+      cpu: "1"
     limits:
       memory: "8Gi"
-      cpu: "6" 
+      cpu: "4" 
   monitoringConsoleRef:
     name: rke
   # licenseManagerRef:
   #   name: rke
-  # fsGroupChangePolicy: "OnRootMismatch"
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: MonitoringConsole
@@ -41,15 +42,11 @@ spec:
     storageCapacity: 25Gi
   resources:
     requests:
-      memory: "8Gi"
-      cpu: "6"
+      memory: "4Gi"
+      cpu: "1"
     limits:
       memory: "8Gi"
-      cpu: "6" 
-  # pod:
-  #   securityContext:
-  #     seLinuxOptions:
-  #       level: "s0:c123,c456"
+      cpu: "4" 
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: IndexerCluster
@@ -66,20 +63,16 @@ spec:
     storageCapacity: 25Gi
   resources:
     requests:
-      memory: "8Gi"
-      cpu: "6"
+      memory: "4Gi"
+      cpu: "1"
     limits:
       memory: "8Gi"
-      cpu: "6" 
+      cpu: "4" 
   clusterManagerRef:
     name: rke
   replicas: 2
   monitoringConsoleRef:
     name: monitor
-  # pod:
-  #   securityContext:
-  #     seLinuxOptions:
-  #       level: "s0:c123,c456"
 ---
 apiVersion: enterprise.splunk.com/v4
 kind: Standalone
@@ -94,21 +87,18 @@ spec:
     storageCapacity: 15Gi
   varVolumeStorageConfig:
     storageCapacity: 25Gi
+  # defaults:
   resources:
     requests:
-      memory: "8Gi"
-      cpu: "6"
+      memory: "4Gi"
+      cpu: "1"
     limits:
       memory: "8Gi"
-      cpu: "6" 
+      cpu: "4" 
   clusterManagerRef:
     name: rke
   monitoringConsoleRef:
     name: rke
-  # pod:
-  #   securityContext:
-  #     seLinuxOptions:
-  #       level: "s0:c123,c456"
 # ---
 # apiVersion: enterprise.splunk.com/v4
 # kind: LicenseManager

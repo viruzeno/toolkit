@@ -15,5 +15,6 @@ spec:
         patchStrategicMerge:
           spec:
             securityContext:
+              fsGroupChangePolicy: OnRootMismatch
               seLinuxOptions:
                 level: "s0:c104,c106"

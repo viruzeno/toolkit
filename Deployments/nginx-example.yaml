@@ -43,7 +43,7 @@ spec:
           claimName: local-path-rwx-example
       containers:
       - name: httpd
-        image: docker.io/rancher/os-selinuxtools:v1.5.8
+        image: image: docker.io/nginxinc/nginx-unprivileged:alpine3.21-perl
         command: ["sleep"]
         args: ["1000"]
         ports:
